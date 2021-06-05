@@ -15,8 +15,8 @@ use crate::{
     gc::{Finalize, Trace},
     property::{AccessorDescriptor, Attribute, DataDescriptor, PropertyDescriptor, PropertyKey},
     symbol::RcSymbol,
-    value::{RcBigInt, RcString, Value},
-    BoaProfiler, Context,
+    value::{RcBigInt, Value},
+    BoaProfiler, Context, JsString,
 };
 use rustc_hash::FxHashMap;
 use std::{
@@ -69,7 +69,7 @@ pub struct Object {
     pub data: ObjectData,
     indexed_properties: FxHashMap<u32, PropertyDescriptor>,
     /// Properties
-    string_properties: FxHashMap<RcString, PropertyDescriptor>,
+    string_properties: FxHashMap<JsString, PropertyDescriptor>,
     /// Symbol Properties
     symbol_properties: FxHashMap<RcSymbol, PropertyDescriptor>,
     /// Instance prototype `__proto__`.
@@ -92,7 +92,7 @@ pub enum ObjectData {
     Function(Function),
     Set(OrderedSet<Value>),
     SetIterator(SetIterator),
-    String(RcString),
+    String(JsString),
     StringIterator(StringIterator),
     Number(f64),
     Symbol(RcSymbol),
@@ -214,7 +214,7 @@ impl Object {
     #[inline]
     pub fn string<S>(value: S) -> Self
     where
-        S: Into<RcString>,
+        S: Into<JsString>,
     {
         Self {
             data: ObjectData::String(value.into()),
@@ -403,7 +403,7 @@ impl Object {
     }
 
     #[inline]
-    pub fn as_string(&self) -> Option<RcString> {
+    pub fn as_string(&self) -> Option<JsString> {
         match self.data {
             ObjectData::String(ref string) => Some(string.clone()),
             _ => None,
@@ -618,13 +618,13 @@ impl Object {
 #[derive(Debug, Clone)]
 pub struct FunctionBinding {
     binding: PropertyKey,
-    name: RcString,
+    name: JsString,
 }
 
 impl From<&str> for FunctionBinding {
     #[inline]
     fn from(name: &str) -> Self {
-        let name: RcString = name.into();
+        let name: JsString = name.into();
 
         Self {
             binding: name.clone().into(),
@@ -636,7 +636,7 @@ impl From<&str> for FunctionBinding {
 impl From<String> for FunctionBinding {
     #[inline]
     fn from(name: String) -> Self {
-        let name: RcString = name.into();
+        let name: JsString = name.into();
 
         Self {
             binding: name.clone().into(),
@@ -645,9 +645,9 @@ impl From<String> for FunctionBinding {
     }
 }
 
-impl From<RcString> for FunctionBinding {
+impl From<JsString> for FunctionBinding {
     #[inline]
-    fn from(name: RcString) -> Self {
+    fn from(name: JsString) -> Self {
         Self {
             binding: name.clone().into(),
             name,

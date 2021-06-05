@@ -22,8 +22,7 @@ use crate::{
         },
         Parser,
     },
-    value::{RcString, Value},
-    BoaProfiler, Executable, Result,
+    BoaProfiler, Executable, JsString, Result, Value,
 };
 
 #[cfg(feature = "console")]
@@ -299,7 +298,7 @@ impl Context {
 
     /// Construct a new `Symbol` with an optional description.
     #[inline]
-    pub fn construct_symbol(&mut self, description: Option<RcString>) -> RcSymbol {
+    pub fn construct_symbol(&mut self, description: Option<JsString>) -> RcSymbol {
         RcSymbol::from(Symbol::new(description))
     }
 

@@ -19,7 +19,7 @@ mod rcsymbol;
 
 use crate::{
     gc::{Finalize, Trace},
-    value::RcString,
+    JsString,
 };
 use std::{
     cell::Cell,
@@ -247,18 +247,18 @@ impl WellKnownSymbols {
 #[derive(Debug, Finalize, Trace, Clone, Eq, PartialOrd, Ord)]
 pub struct Symbol {
     pub(crate) hash: u64,
-    pub(crate) description: Option<RcString>,
+    pub(crate) description: Option<JsString>,
 }
 
 impl Symbol {
     /// Create a new symbol with a specified hash and description.
-    fn with_hash(hash: u64, description: Option<RcString>) -> Self {
+    fn with_hash(hash: u64, description: Option<JsString>) -> Self {
         Self { hash, description }
     }
 
     /// Create a new symbol.
     #[inline]
-    pub fn new(description: Option<RcString>) -> Self {
+    pub fn new(description: Option<JsString>) -> Self {
         let hash = SYMBOL_HASH_COUNT.with(|count| {
             let hash = count.get();
             count.set(hash + 1);

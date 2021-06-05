@@ -15,8 +15,7 @@ use crate::{
     object::{ConstructorBuilder, FunctionBuilder, GcObject, ObjectData, PROTOTYPE},
     property::{Attribute, DataDescriptor},
     symbol::WellKnownSymbols,
-    value::{RcString, Value},
-    BoaProfiler, Context, Result,
+    BoaProfiler, Context, JsString, Result, Value,
 };
 use regress::Regex;
 
@@ -630,7 +629,7 @@ impl RegExp {
     ///
     /// [spec]: https://tc39.es/ecma262/#sec-regexp.prototype-@@match
     /// [mdn]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/@@match
-    pub(crate) fn r#match(this: &Value, arg: RcString, context: &mut Context) -> Result<Value> {
+    pub(crate) fn r#match(this: &Value, arg: JsString, context: &mut Context) -> Result<Value> {
         let (matcher, flags) = if let Some(object) = this.as_object() {
             let object = object.borrow();
             if let Some(regex) = object.as_regexp() {

@@ -18,7 +18,7 @@ use crate::{
     gc::{Finalize, Trace},
     object::GcObject,
     symbol::RcSymbol,
-    value::{RcString, Value},
+    JsString, Value,
 };
 use std::{convert::TryFrom, fmt};
 
@@ -306,14 +306,14 @@ impl PropertyDescriptor {
 /// [spec]: https://tc39.es/ecma262/#sec-ispropertykey
 #[derive(Trace, Finalize, Debug, Clone)]
 pub enum PropertyKey {
-    String(RcString),
+    String(JsString),
     Symbol(RcSymbol),
     Index(u32),
 }
 
-impl From<RcString> for PropertyKey {
+impl From<JsString> for PropertyKey {
     #[inline]
-    fn from(string: RcString) -> PropertyKey {
+    fn from(string: JsString) -> PropertyKey {
         if let Ok(index) = string.parse() {
             PropertyKey::Index(index)
         } else {
@@ -430,7 +430,7 @@ impl From<usize> for PropertyKey {
         if let Ok(index) = u32::try_from(value) {
             PropertyKey::Index(index)
         } else {
-            PropertyKey::String(RcString::from(value.to_string()))
+            PropertyKey::String(JsString::from(value.to_string()))
         }
     }
 }
@@ -440,7 +440,7 @@ impl From<isize> for PropertyKey {
         if let Ok(index) = u32::try_from(value) {
             PropertyKey::Index(index)
         } else {
-            PropertyKey::String(RcString::from(value.to_string()))
+            PropertyKey::String(JsString::from(value.to_string()))
         }
     }
 }
@@ -450,7 +450,7 @@ impl From<i32> for PropertyKey {
         if let Ok(index) = u32::try_from(value) {
             PropertyKey::Index(index)
         } else {
-            PropertyKey::String(RcString::from(value.to_string()))
+            PropertyKey::String(JsString::from(value.to_string()))
         }
     }
 }

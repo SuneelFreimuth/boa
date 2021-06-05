@@ -21,8 +21,7 @@ use crate::{
     object::{ConstructorBuilder, Object, ObjectData},
     property::Attribute,
     symbol::WellKnownSymbols,
-    value::{RcString, Value},
-    BoaProfiler, Context, Result,
+    BoaProfiler, Context, JsString, Result, Value,
 };
 use regress::Regex;
 use std::{
@@ -32,7 +31,7 @@ use std::{
 };
 use unicode_normalization::UnicodeNormalization;
 
-pub(crate) fn code_point_at(string: RcString, position: i32) -> Option<(u32, u8, bool)> {
+pub(crate) fn code_point_at(string: JsString, position: i32) -> Option<(u32, u8, bool)> {
     let size = string.encode_utf16().count() as i32;
     if position < 0 || position >= size {
         return None;
@@ -171,7 +170,7 @@ impl String {
                     .clone()
             }
             Some(ref value) => value.to_string(context)?,
-            None => RcString::default(),
+            None => JsString::default(),
         };
 
         if new_target.is_undefined() {
@@ -203,7 +202,7 @@ impl String {
         Ok(this)
     }
 
-    fn this_string_value(this: &Value, context: &mut Context) -> Result<RcString> {
+    fn this_string_value(this: &Value, context: &mut Context) -> Result<JsString> {
         match this {
             Value::String(ref string) => return Ok(string.clone()),
             Value::Object(ref object) => {
@@ -909,9 +908,9 @@ impl String {
     /// Performs the actual string padding for padStart/End.
     /// <https://tc39.es/ecma262/#sec-stringpad/>
     fn string_pad(
-        primitive: RcString,
+        primitive: JsString,
         max_length: i32,
-        fill_string: Option<RcString>,
+        fill_string: Option<JsString>,
         at_start: bool,
     ) -> Value {
         let primitive_length = primitive.len() as i32;
